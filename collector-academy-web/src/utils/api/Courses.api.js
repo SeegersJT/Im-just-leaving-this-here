@@ -162,6 +162,11 @@ export const getCourseTestResultInsertRequest = (accessToken, courseResultNo, co
   getHttpPostData(null, getAuthHeaders(accessToken), { courseResultNo, courseTestNo })
 ];
 
+export const getCourseTestResultUpdateRequest = (accessToken, courseTestResultNo) => [
+  getCourseTestResultEndpoint(),
+  getHttpPutData(null, getAuthHeaders(accessToken), { courseTestResultNo })
+];
+
 export const getCourseTestLogInsertRequest = (accessToken, courseTestResultNo, courseTestQuestionNo, courseTestAnswerNo) => [
   getCourseTestLogEndpoint(),
   getHttpPostData({ courseTestResultNo, courseTestQuestionNo, courseTestAnswerNo }, getAuthHeaders(accessToken))

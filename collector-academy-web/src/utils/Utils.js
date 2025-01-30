@@ -332,6 +332,19 @@ export class Utils {
   }
 
   /**
+   * Format a string by replacing underscores and hyphens with spaces.
+   * @param {string} value - The input string to format.
+   * @returns {string} - Returns a formatted string with spaces instead of "_" and "-".
+   */
+  static formatString(value) {
+    if (typeof value !== 'string') {
+      return '';
+    }
+
+    return value.replace(/[_-]/g, ' ');
+  }
+
+  /**
    * Modify the current date by adding or subtracting the specified time.
    * @param {object} timeObject - An object specifying the time to add or subtract.
    * @param {number} [timeObject.days] - Number of days to modify.

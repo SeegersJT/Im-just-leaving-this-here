@@ -597,6 +597,36 @@ function* courseTestResultInsertRequestSaga({ accessToken, courseResultNo, cours
   yield put(coursesActions.requestCourseTestResultInsertLoading(false));
 }
 
+function* courseTestResultUpdateRequestSaga({ accessToken, courseTestResultNo }) {
+  yield put(coursesActions.requestCourseTestResultUpdateLoading(true));
+  try {
+    const [endpoint, requestOptions] = api.getCourseTestResultUpdateRequest(accessToken, courseTestResultNo);
+
+    const { data } = yield call(axios, endpoint, requestOptions);
+
+    console.log('data', data);
+
+    const payload = {
+      courseTestNo: data?.courseTestNo,
+      courseTestResultNo: data?.courseTestResultNo,
+      courseTestResultStatusNo: data?.courseTestResultStatusNo,
+      courseTestResultStatus: data?.courseTestResultStatus,
+      courseTestResultPercentage: data?.courseTestResultPercentage,
+      myTestLogs: []
+    };
+
+    yield put(myCoursesActions.changeMyCourseTestResult(payload));
+  } catch (error) {
+    if (!Utils.isUndefined(error.response.data.message)) {
+      yield put(systemActions.addSystemNotification(error.response.data.message, SNACK_ERROR));
+    } else {
+      yield put(systemActions.addSystemNotification('Server is Unavailable', SNACK_ERROR));
+    }
+  }
+
+  yield put(coursesActions.requestCourseTestResultUpdateLoading(false));
+}
+
 function* courseTestLogInsertRequestSaga({ accessToken, courseTestResultNo, courseTestQuestionNo, courseTestAnswerNo }) {
   yield put(coursesActions.requestCourseTestLogInsertLoading(true));
   try {
@@ -659,6 +689,6 @@ export function* watchCoursesSagas() {
   yield takeEvery(coursesActions.REQUEST_ALL_COURSE_RESULTS, getCourseResultsRequestSaga);
   yield takeEvery(coursesActions.REQUEST_COURSE_RESULT_UPDATE, courseResultUpdateRequestSaga);
   yield takeEvery(coursesActions.REQUEST_COURSE_TEST_RESULT_INSERT, courseTestResultInsertRequestSaga);
+  yield takeEvery(coursesActions.REQUEST_COURSE_TEST_RESULT_UPDATE, courseTestResultUpdateRequestSaga);
   yield takeEvery(coursesActions.REQUEST_COURSE_TEST_LOG_INSERT, courseTestLogInsertRequestSaga);
-  yield takeEvery(coursesActions.REQUEST_COURSE_TEST_LOG_UPDATE, courseTestLogUpdateRequestSaga);
 }

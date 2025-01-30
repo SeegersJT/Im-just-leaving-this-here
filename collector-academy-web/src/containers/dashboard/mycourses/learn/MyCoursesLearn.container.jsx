@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import * as myCoursesActions from 'redux/actions/MyCourses.action';
 import { Utils } from 'utils/Utils';
 import { getTestStatusColor } from './MyCoursesLearn.helper';
-import { requestCourseTestLogInsert, requestCourseTestResultInsert } from 'redux/actions/Courses.action';
+import { requestCourseTestLogInsert, requestCourseTestResultInsert, requestCourseTestResultUpdate } from 'redux/actions/Courses.action';
 
 function MyCoursesLearnContainer() {
   const theme = useTheme();
@@ -90,6 +90,8 @@ function MyCoursesLearnContainer() {
           isTestContent: true
         });
       });
+
+      console.log();
 
       if (Utils.isNull(courseTestResultNo)) {
         dispatch(requestCourseTestResultInsert(accessToken, courseResultNo, courseTestNo));
@@ -171,7 +173,7 @@ function MyCoursesLearnContainer() {
       formatLearnActionsListData.push({
         title: myTest?.testTitle,
         description: `Difficulty: ${myTest?.courseDifficulty} - Duration: ${Utils.formatMinutes(myTest?.testDuration)}`,
-        titleRight: myTest?.myCourseTestResult?.courseTestResultStatus || 'Not Started',
+        titleRight: Utils.formatString(myTest?.myCourseTestResult?.courseTestResultStatus) || 'Not Started',
         descriptionRight: `Remaining Attempts: ${myTest?.remainingRetries}`,
         icon: <EditOutlined style={{ fontSize: '20px' }} />,
         iconSize: 1,
@@ -242,8 +244,9 @@ function MyCoursesLearnContainer() {
     const selectedTest = myTests.find((myTest) => myTest?.courseTestNo === selectedCourseTestNo);
     const courseTestResultNo = selectedTest?.myCourseTestResult?.courseTestResultNo;
 
-    console.log('FINISH TEST');
     dispatch(requestCourseTestResultUpdate(accessToken, courseTestResultNo));
+
+    setSelectedView('course');
   };
 
   return (
