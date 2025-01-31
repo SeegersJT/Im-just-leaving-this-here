@@ -14,6 +14,6 @@ import java.util.Optional;
 public interface CourseTestResultRepository extends JpaRepository<CourseTestResult, String> {
     List<CourseTestResult> findByCourseResultNo(String courseResultNo);
     List<CourseTestResult> findByCourseTestNo(String courseTestNo);
-    List<CourseTestResult> findByCourseResultNoAndCourseTestNo(String courseResultNo, String courseTestNo);
+    List<CourseTestResult> findByCourseResultNoAndCourseTestNoOrderBySystemDateAsc(String courseResultNo, String courseTestNo);
     Optional<CourseTestResult> findByCourseTestResultNo(String courseTestResultNo);
 }

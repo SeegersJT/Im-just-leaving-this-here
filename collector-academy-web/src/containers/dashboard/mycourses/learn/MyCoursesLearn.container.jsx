@@ -47,7 +47,7 @@ function MyCoursesLearnContainer() {
             subHeader2: myModule?.moduleDescription,
             header3: `Page: ${myPage?.pageTitle}`,
             subHeader3: myPage?.pageDescription,
-            content: myPage?.pageContent /// CONVERT INTO HTML FRIENDLY TEXT
+            content: myPage?.pageContent
           });
         });
       });
@@ -59,6 +59,7 @@ function MyCoursesLearnContainer() {
       const selectedTest = myTests.find((myTest) => myTest?.courseTestNo === selectedCourseTestNo);
       const courseTestNo = selectedTest?.courseTestNo;
       const myCourseTestResult = selectedTest?.myCourseTestResult;
+      const courseTestResultStatusNo = myCourseTestResult?.courseTestResultStatusNo;
       const courseTestResultNo = myCourseTestResult?.courseTestResultNo;
       const myTestLogs = myCourseTestResult?.myTestLogs;
       const courseResultNo = myCourseResult?.courseResultNo;
@@ -81,7 +82,6 @@ function MyCoursesLearnContainer() {
               ),
               color: selectedAnswer ? theme.palette.primary.main : theme.palette.secondary.main,
               backgroundColor: selectedAnswer ? theme.palette.primary.lighter : theme.palette.secondary.lighter,
-
               onClick: () =>
                 handleOnAnswerClick(selectedTest?.myCourseTestResult, myQuestion?.courseTestQuestionNo, myAnswer?.courseTestAnswerNo)
             };
@@ -91,9 +91,10 @@ function MyCoursesLearnContainer() {
         });
       });
 
-      console.log();
-
-      if (Utils.isNull(courseTestResultNo)) {
+      if (
+        Utils.isNull(courseTestResultNo) ||
+        (courseTestResultStatusNo !== 1 && courseTestResultStatusNo !== 2 && courseTestResultStatusNo !== 3)
+      ) {
         dispatch(requestCourseTestResultInsert(accessToken, courseResultNo, courseTestNo));
       }
 
@@ -140,22 +141,33 @@ function MyCoursesLearnContainer() {
     setLearnGroupData(formatLearnGroupData);
   }, [theme, steps, selectedStep]);
 
+  const handleOnSelectModules = () => {
+    setSelectedView('course');
+    setSelectedStep(0);
+  };
+
+  const handleOnStartTestClick = (courseTestNo) => {
+    const { myCourse } = myLearnCourse;
+    const { myTests } = myCourse;
+
+    const selectedTest = myTests.find((myTest) => myTest?.courseTestNo === selectedCourseTestNo);
+    const remainingRetries = selectedTest?.remainingRetries;
+
+    console.log('remainingRetries', remainingRetries);
+    // (courseTestResultStatusNo !== 2) & (courseTestResultStatusNo !== 3) &&
+
+    // console.log('courseTestResultStatusNo', courseTestResultStatusNo);
+
+    setSelectedView('test');
+    setSelectedStep(0);
+    setSelectedCOurseTestNo(courseTestNo);
+  };
+
   useEffect(() => {
     const formatLearnActionsListData = [];
 
     const { myCourse } = myLearnCourse;
-    const { myModules, myTests } = myCourse;
-
-    const handleOnSelectModules = () => {
-      setSelectedView('course');
-      setSelectedStep(0);
-    };
-
-    const handleOnStartTestClick = (courseTestNo) => {
-      setSelectedView('test');
-      setSelectedStep(0);
-      setSelectedCOurseTestNo(courseTestNo);
-    };
+    const { myTests } = myCourse;
 
     formatLearnActionsListData.push({
       title: 'Learn Course',
@@ -184,12 +196,12 @@ function MyCoursesLearnContainer() {
     });
 
     setLearnActionsListData(formatLearnActionsListData);
-  }, [theme, myLearnCourse]);
+  }, [theme, myLearnCourse, selectedCourseTestNo]);
 
   useEffect(() => {
     const formatFinishTestActionsListData = [];
     const { myCourse } = myLearnCourse;
-    const { myModules, myTests } = myCourse;
+    const { myTests } = myCourse;
 
     const selectedTest = myTests.find((myTest) => myTest?.courseTestNo === selectedCourseTestNo);
     const questionsCount = selectedTest?.myQuestions.length;

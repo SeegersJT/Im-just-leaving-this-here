@@ -26,7 +26,7 @@ public class CourseTestResultService {
     }
 
     public List<CourseTestResult> findByCourseResultNoAndCourseTestNo(String courseResultNo, String courseTestNo) {
-        return courseTestResultRepository.findByCourseResultNoAndCourseTestNo(courseResultNo, courseTestNo);
+        return courseTestResultRepository.findByCourseResultNoAndCourseTestNoOrderBySystemDateAsc(courseResultNo, courseTestNo);
     }
 
     public CourseTestResult findByCourseTestResultNo(String courseTestResultNo) {

@@ -46,14 +46,26 @@ const myCoursesReducer = (state = initialState, action) => {
       return {
         ...state,
         myLearnCourse: {
-          ...state.myLearnCourse, // Ensure we reference `state`
+          ...state.myLearnCourse,
           myCourse: {
             ...state.myLearnCourse.myCourse,
-            myTests: state.myLearnCourse.myCourse.myTests.map((myTest) =>
-              myTest.courseTestNo === action.payload.courseTestNo
-                ? { ...myTest, myCourseTestResult: { ...myTest.myCourseTestResult, ...action.payload } }
-                : myTest
-            )
+            myTests: state.myLearnCourse.myCourse.myTests.map((myTest) => {
+              const courseTestResultStatusNo = action.payload.courseTestResultStatusNo;
+              console.log('action.payload', action.payload);
+              console.log('myTest', myTest);
+              console.log('courseTestResultStatusNo', courseTestResultStatusNo);
+
+              return myTest.courseTestNo === action.payload.courseTestNo
+                ? {
+                    ...myTest,
+                    remainingRetries: courseTestResultStatusNo !== 1 ? myTest.remainingRetries - 1 : myTest.remainingRetries,
+                    myCourseTestResult: {
+                      ...myTest.myCourseTestResult,
+                      ...action.payload
+                    }
+                  }
+                : myTest;
+            })
           }
         }
       };
